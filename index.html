@@ -2,99 +2,76 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🐆 Леопардовые крестики-нолики</title>
+  <!-- Защита от масштабирования на телефонах (чтобы не было зума при двойном клике) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Запрет индексации в поисковиках -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>🐆 Игра</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
-    :root {
-      --sand: #f5e6c8; --sand-2: #efd9b0; --cocoa: #2c1810; --cocoa-soft: #4a2c1d;
-      --brown: #8b5a2b; --gold: #d4a373; --cream: #fff8e6;
-      --green: #4caf50; --red: #e53935;
-      --shadow-soft: 0 10px 30px rgba(44, 24, 16, 0.25);
-      --radius: 20px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --sand: #f5e6c8; --sand-2: #efd9b0; --cocoa: #2c1810; --brown: #8b5a2b; --gold: #d4a373; --cream: #fff8e6; --green: #4caf50; --red: #e53935; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; }
     body {
-      font-family: 'Fredoka', system-ui, sans-serif; color: var(--cocoa);
-      background: var(--sand); overflow-x: hidden; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center; padding: 24px 16px; position: relative;
+      font-family: 'Fredoka', system-ui, sans-serif; color: var(--cocoa); background: var(--sand);
+      min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 16px; position: relative;
+      touch-action: manipulation; /* Ускоряет клики на мобилке */
     }
     .leopard-bg {
       position: fixed; inset: 0; z-index: -1; background-color: var(--sand);
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'><g fill='%238b5a2b'><circle cx='40' cy='50' r='14'/><circle cx='95' cy='30' r='10'/><circle cx='150' cy='70' r='16'/><circle cx='215' cy='40' r='11'/><circle cx='30' cy='130' r='12'/><circle cx='85' cy='150' r='15'/><circle cx='160' cy='140' r='13'/><circle cx='220' cy='150' r='10'/><circle cx='55' cy='220' r='14'/><circle cx='130' cy='215' r='12'/><circle cx='200' cy='230' r='15'/></g><g fill='%232c1810'><circle cx='40' cy='50' r='7'/><circle cx='95' cy='30' r='5'/><circle cx='150' cy='70' r='8'/><circle cx='215' cy='40' r='6'/><circle cx='30' cy='130' r='6'/><circle cx='85' cy='150' r='7'/><circle cx='160' cy='140' r='7'/><circle cx='220' cy='150' r='5'/><circle cx='55' cy='220' r='7'/><circle cx='130' cy='215' r='6'/><circle cx='200' cy='230' r='8'/></g></svg>");
       background-size: 260px 260px;
     }
-    .leopard-bg::after {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(circle at center, transparent 0%, rgba(44, 24, 16, 0.35) 100%);
-    }
-    .app { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 20px; animation: fadeUp 0.5s ease-out; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    .hero { text-align: center; color: var(--cocoa); }
-    .hero h1 { font-size: clamp(1.7rem, 6vw, 2.4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.5px; text-shadow: 3px 3px 0 var(--gold), -1px -1px 0 var(--cream); margin-bottom: 8px; }
-    .subtitle { font-weight: 500; font-size: 0.95rem; color: var(--cocoa-soft); background: rgba(255, 248, 230, 0.7); padding: 6px 14px; border-radius: 999px; display: inline-block; backdrop-filter: blur(6px); }
-    .card { background: rgba(255, 248, 230, 0.92); backdrop-filter: blur(10px); border: 3px solid var(--cocoa); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-soft), 6px 6px 0 rgba(44, 24, 16, 0.85); display: flex; flex-direction: column; gap: 14px; animation: fadeUp 0.4s ease-out; }
+    .leopard-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 0%, rgba(44, 24, 16, 0.35) 100%); }
+    .app { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+    .hero { text-align: center; }
+    .hero h1 { font-size: clamp(1.5rem, 6vw, 2.2rem); line-height: 1.1; text-shadow: 2px 2px 0 var(--gold); margin-bottom: 6px; }
+    .subtitle { font-size: 0.85rem; color: var(--cocoa-soft); background: rgba(255,248,230,0.7); padding: 4px 12px; border-radius: 999px; display: inline-block; }
+    .card { background: rgba(255, 248, 230, 0.95); border: 3px solid var(--cocoa); border-radius: 16px; padding: 16px; box-shadow: 0 6px 0 rgba(44, 24, 16, 0.85); display: flex; flex-direction: column; gap: 12px; }
     .hidden { display: none !important; }
-    .label { font-weight: 600; font-size: 0.9rem; color: var(--cocoa-soft); text-transform: uppercase; letter-spacing: 1px; }
-    .input-group { display: flex; gap: 10px; }
-    input[type="text"] { flex: 1; padding: 14px 16px; border: 3px solid var(--brown); border-radius: 14px; background: var(--cream); font-family: inherit; font-size: 1rem; font-weight: 500; color: var(--cocoa); outline: none; transition: border-color 0.2s, box-shadow 0.2s; min-width: 0; }
-    input[type="text"]:focus { border-color: var(--cocoa); box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.5); }
-    button { font-family: inherit; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: transform 0.1s, background 0.2s, box-shadow 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn-primary { padding: 14px 22px; background: var(--cocoa); color: var(--cream); border-radius: 14px; box-shadow: 0 4px 0 #1a0e08; white-space: nowrap; }
-    .btn-primary:hover { background: var(--brown); }
+    .label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
+    .input-group { display: flex; gap: 8px; flex-direction: column; }
+    input[type="text"] { padding: 14px; border: 3px solid var(--brown); border-radius: 10px; background: var(--cream); font-size: 16px; /* Важно для iOS, чтобы не было зума */ outline: none; width: 100%; }
+    button { font-family: inherit; font-weight: 600; font-size: 1rem; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; touch-action: manipulation; }
+    .btn-primary { padding: 14px; background: var(--cocoa); color: var(--cream); border-radius: 10px; box-shadow: 0 4px 0 #1a0e08; width: 100%; }
     .btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a0e08; }
-    .btn-secondary { padding: 14px 22px; background: var(--gold); color: var(--cocoa); border-radius: 14px; box-shadow: 0 4px 0 var(--brown); font-weight: 700; }
+    .btn-secondary { padding: 14px; background: var(--gold); color: var(--cocoa); border-radius: 10px; box-shadow: 0 4px 0 var(--brown); width: 100%; }
     .btn-secondary:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--brown); }
-    .btn-ghost { padding: 10px; background: transparent; color: var(--cocoa-soft); font-weight: 500; font-size: 0.9rem; border-radius: 10px; }
-    .btn-ghost:hover { background: rgba(139, 90, 43, 0.12); }
-    .status { min-height: 1.2em; font-weight: 500; color: var(--red); text-align: center; }
-    .hint { font-size: 0.85rem; color: var(--cocoa-soft); text-align: center; line-height: 1.5; opacity: 0.85; }
-    .room-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-    .room-badge, .you-badge { font-size: 0.85rem; font-weight: 600; padding: 6px 14px; border-radius: 999px; background: var(--cocoa); color: var(--cream); }
+    .btn-ghost { padding: 10px; background: transparent; color: var(--cocoa); font-size: 0.9rem; }
+    .status { font-size: 0.9rem; color: var(--red); text-align: center; min-height: 1.2em; }
+    .hint { font-size: 0.8rem; text-align: center; opacity: 0.8; }
+    .room-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 0.8rem; }
+    .room-badge, .you-badge { font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--cocoa); color: var(--cream); }
     .you-badge { background: var(--gold); color: var(--cocoa); }
-    .turn { text-align: center; font-size: 1.15rem; font-weight: 600; color: var(--cocoa); padding: 8px; border-radius: 12px; background: rgba(212, 163, 115, 0.35); }
-    .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; background: var(--cocoa); border-radius: 18px; box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.4); aspect-ratio: 1 / 1; max-width: 380px; margin: 0 auto; width: 100%; }
-    .cell { aspect-ratio: 1 / 1; background: var(--cream); border-radius: 12px; font-size: clamp(2rem, 10vw, 3.2rem); font-weight: 700; color: var(--cocoa); display: flex; align-items: center; justify-content: center; padding: 0; transition: background 0.15s, transform 0.1s; box-shadow: 0 3px 0 var(--brown); }
-    .cell:hover:not(.taken) { background: var(--sand-2); transform: translateY(-2px); }
-    .cell:active:not(.taken) { transform: translateY(2px); box-shadow: 0 1px 0 var(--brown); }
+    .turn { text-align: center; font-size: 1rem; font-weight: 600; padding: 6px; border-radius: 8px; background: rgba(212,163,115,0.35); }
+    .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 8px; background: var(--cocoa); border-radius: 14px; aspect-ratio: 1 / 1; width: 100%; user-select: none; -webkit-user-select: none; }
+    .cell { background: var(--cream); border-radius: 8px; font-size: clamp(2rem, 12vw, 3rem); font-weight: 700; color: var(--cocoa); display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: 0 3px 0 var(--brown); }
     .cell.taken { cursor: not-allowed; box-shadow: none; }
-    .cell.pop { animation: pop 0.3s ease-out; }
-    @keyframes pop { 0% { transform: scale(0.3); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); } }
-    .cell.win { background: var(--green); color: #fff; animation: winPulse 0.8s ease-in-out infinite alternate; }
-    @keyframes winPulse { from { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); } to { box-shadow: 0 0 0 12px rgba(76, 175, 80, 0); } }
-    .result { text-align: center; font-size: 1.3rem; font-weight: 700; min-height: 1.4em; padding: 6px; }
+    .cell.win { background: var(--green); color: #fff; }
+    .result { text-align: center; font-size: 1.1rem; font-weight: 700; min-height: 1.4em; }
     .result.win-msg { color: var(--green); }
     .result.draw-msg { color: var(--brown); }
-    .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 100; }
-    .confetti-piece { position: absolute; top: -20px; width: 10px; height: 16px; opacity: 0.9; animation: fall 3s linear forwards; border-radius: 2px; }
-    @keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
-    @media (max-width: 480px) { .card { padding: 18px; } .input-group { flex-direction: column; } .btn-primary { width: 100%; } }
+    @media (min-width: 481px) { .input-group { flex-direction: row; } .btn-primary { width: auto; } }
   </style>
 </head>
 <body>
   <div class="leopard-bg" aria-hidden="true"></div>
-
   <main class="app">
     <header class="hero">
       <h1>🐆 Леопардовые<br>крестики-нолики</h1>
-      <p class="subtitle">Играй с другом онлайн в реальном времени</p>
+      <p class="subtitle">Онлайн игра</p>
     </header>
 
     <section id="lobby" class="card">
-      <label for="roomInput" class="label">Название комнаты</label>
+      <label class="label">Комната</label>
       <div class="input-group">
-        <input type="text" id="roomInput" placeholder="например: leopard-1" maxlength="24" autocomplete="off">
-        <button id="joinBtn" class="btn-primary">
-          <span>Войти</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </button>
+        <input type="text" id="roomInput" placeholder="Имя комнаты" maxlength="20" autocomplete="off">
+        <button id="joinBtn" class="btn-primary">Войти</button>
       </div>
       <p id="statusMsg" class="status"></p>
-      <p class="hint">💡 Открой ссылку в двух окнах и введи одинаковое имя — вы в одной игре.</p>
     </section>
 
     <section id="gameArea" class="card hidden">
@@ -103,198 +80,41 @@
         <span class="you-badge" id="youLabel">—</span>
       </div>
       <p id="turnLabel" class="turn">Ход: ❌</p>
-      <div class="board" id="board" role="grid">
-        <button class="cell" data-index="0"></button>
-        <button class="cell" data-index="1"></button>
-        <button class="cell" data-index="2"></button>
-        <button class="cell" data-index="3"></button>
-        <button class="cell" data-index="4"></button>
-        <button class="cell" data-index="5"></button>
-        <button class="cell" data-index="6"></button>
-        <button class="cell" data-index="7"></button>
-        <button class="cell" data-index="8"></button>
+      <div class="board" id="board">
+        <button class="cell" data-index="0"></button><button class="cell" data-index="1"></button><button class="cell" data-index="2"></button>
+        <button class="cell" data-index="3"></button><button class="cell" data-index="4"></button><button class="cell" data-index="5"></button>
+        <button class="cell" data-index="6"></button><button class="cell" data-index="7"></button><button class="cell" data-index="8"></button>
       </div>
       <p id="resultMsg" class="result"></p>
       <button id="resetBtn" class="btn-secondary hidden">🔄 Играть снова</button>
-      <button id="leaveBtn" class="btn-ghost">← Выйти в лобби</button>
+      <button id="leaveBtn" class="btn-ghost">← Выйти</button>
     </section>
   </main>
 
-  <div class="confetti" id="confetti" aria-hidden="true"></div>
-
+  <!-- Обфусцированный (сжатый) скрипт -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, update, off, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    // Твой конфиг с добавленным databaseURL
-    const firebaseConfig = {
-      apiKey: "AIzaSyAkgLYaWb7GaRoaGeYNhEFyNUApl8bbyjw",
-      authDomain: "leopard-game-dff83.firebaseapp.com",
-      databaseURL: "https://leopard-game-dff83-default-rtdb.firebaseio.com/",
-      projectId: "leopard-game-dff83",
-      storageBucket: "leopard-game-dff83.firebasestorage.app",
-      messagingSenderId: "200665155506",
-      appId: "1:200665155506:web:8e60f63015e1d66b6906ab",
-      measurementId: "G-LREP84R6TH"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const lobby = document.getElementById("lobby");
-    const gameArea = document.getElementById("gameArea");
-    const roomInput = document.getElementById("roomInput");
-    const joinBtn = document.getElementById("joinBtn");
-    const statusMsg = document.getElementById("statusMsg");
-    const roomLabel = document.getElementById("roomLabel");
-    const youLabel = document.getElementById("youLabel");
-    const turnLabel = document.getElementById("turnLabel");
-    const resultMsg = document.getElementById("resultMsg");
-    const resetBtn = document.getElementById("resetBtn");
-    const leaveBtn = document.getElementById("leaveBtn");
-    const cells = document.querySelectorAll(".cell");
-    const confettiEl = document.getElementById("confetti");
-
-    let roomId = null;
-    let mySymbol = null;
-    let gameRef = null;
-    let lastBoard = ["", "", "", "", "", "", "", "", ""];
-    let lastWinner = null;
-
-    const WIN_PATTERNS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-
-    joinBtn.addEventListener("click", enterRoom);
-    roomInput.addEventListener("keydown", e => { if (e.key === "Enter") enterRoom(); });
-
-    async function enterRoom() {
-      const room = roomInput.value.trim();
-      if (!room) { statusMsg.textContent = "Введите название комнаты"; roomInput.focus(); return; }
-      roomId = room;
-      mySymbol = null;
-      statusMsg.textContent = "Подключение...";
-      gameRef = ref(db, `games/${roomId}`);
-      if (gameRef) off(gameRef);
-
-      onValue(gameRef, (snapshot) => {
-        const data = snapshot.val();
-        if (!data) { createNewGame(); return; }
-        attachToGame(data);
-      });
-
-      lobby.classList.add("hidden");
-      gameArea.classList.remove("hidden");
-      roomLabel.textContent = `🏠 ${roomId}`;
-    }
-
-    async function createNewGame() {
-      mySymbol = "X";
-      await set(gameRef, {
-        board: Array(9).fill(""), turn: "X", winner: null,
-        playerX: true, playerO: false, createdAt: serverTimestamp()
-      });
-    }
-
-    function attachToGame(data) {
-      if (!mySymbol) {
-        if (!data.playerO) {
-          mySymbol = "O"; update(gameRef, { playerO: true });
-        } else { mySymbol = "spectator"; }
-        youLabel.textContent = mySymbol === "X" ? "Вы: ❌" : mySymbol === "O" ? "Вы: ⭕" : "Вы: 👀";
-      }
-      render(data);
-    }
-
-    cells.forEach(cell => {
-      cell.addEventListener("click", () => {
-        if (!mySymbol || mySymbol === "spectator" || !gameRef) return;
-        onValue(gameRef, (snap) => {
-          const data = snap.val();
-          if (!data || data.winner || data.turn !== mySymbol) return;
-          const i = Number(cell.dataset.index);
-          if (data.board[i] !== "") return;
-
-          const newBoard = [...data.board];
-          newBoard[i] = mySymbol;
-          const winInfo = checkWinner(newBoard);
-          const isDraw = !winInfo && newBoard.every(c => c !== "");
-
-          update(gameRef, {
-            board: newBoard,
-            turn: mySymbol === "X" ? "O" : "X",
-            winner: winInfo ? winInfo.winner : (isDraw ? "draw" : null)
-          });
-        }, { onlyOnce: true });
-      });
-    });
-
-    function checkWinner(board) {
-      for (const p of WIN_PATTERNS) {
-        const [a,b,c] = p;
-        if (board[a] && board[a] === board[b] && board[a] === board[c]) return { winner: board[a], line: p };
-      }
-      return null;
-    }
-
-    function render(data) {
-      if (!data) return;
-      cells.forEach((cell, i) => {
-        const val = data.board[i] || "";
-        const changed = val !== (lastBoard[i] || "");
-        cell.textContent = val;
-        cell.classList.toggle("taken", val !== "");
-        if (changed && val) { cell.classList.remove("pop"); void cell.offsetWidth; cell.classList.add("pop"); }
-        cell.classList.remove("win");
-      });
-      lastBoard = [...data.board];
-
-      if (!data.winner) {
-        turnLabel.textContent = (data.turn === "X" ? "Ход: ❌" : "Ход: ⭕") + (mySymbol === data.turn ? " — ваш" : "");
-        resultMsg.textContent = "";
-        resetBtn.classList.add("hidden");
-      } else if (data.winner === "draw") {
-        turnLabel.textContent = "Игра окончена";
-        resultMsg.textContent = "🤝 Ничья!";
-        resultMsg.className = "result draw-msg";
-        resetBtn.classList.remove("hidden");
-      } else {
-        turnLabel.textContent = "Игра окончена";
-        resultMsg.textContent = `🏆 Победили ${data.winner === "X" ? "❌" : "⭕"}!`;
-        resultMsg.className = "result win-msg";
-        resetBtn.classList.remove("hidden");
-        const info = checkWinner(data.board);
-        if (info) info.line.forEach(i => cells[i].classList.add("win"));
-        if (lastWinner !== data.winner) launchConfetti();
-      }
-      lastWinner = data.winner;
-    }
-
-    resetBtn.addEventListener("click", () => {
-      if (!gameRef) return;
-      update(gameRef, { board: Array(9).fill(""), turn: "X", winner: null });
-      lastWinner = null;
-    });
-
-    leaveBtn.addEventListener("click", () => {
-      if (gameRef) off(gameRef);
-      roomId = null; mySymbol = null; gameRef = null; lastBoard = ["", "", "", "", "", "", "", "", ""]; lastWinner = null;
-      cells.forEach(c => { c.textContent = ""; c.className = "cell"; });
-      resultMsg.textContent = ""; statusMsg.textContent = ""; roomInput.value = "";
-      gameArea.classList.add("hidden"); lobby.classList.remove("hidden");
-    });
-
-    function launchConfetti() {
-      confettiEl.innerHTML = "";
-      const colors = ["#d4a373", "#8b5a2b", "#2c1810", "#4caf50", "#fff8e6"];
-      for (let i = 0; i < 40; i++) {
-        const p = document.createElement("div"); p.className = "confetti-piece";
-        p.style.left = Math.random() * 100 + "%";
-        p.style.background = colors[Math.floor(Math.random() * colors.length)];
-        p.style.animationDelay = Math.random() * 0.6 + "s";
-        p.style.animationDuration = (2 + Math.random() * 2) + "s";
-        confettiEl.appendChild(p);
-      }
-      setTimeout(() => confettiEl.innerHTML = "", 5000);
-    }
+    import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";import{getDatabase,ref,set,onValue,update,off,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    
+    const firebaseConfig={apiKey:"AIzaSyAkgLYaWb7GaRoaGeYNhEFyNUApl8bbyjw",authDomain:"leopard-game-dff83.firebaseapp.com",databaseURL:"https://leopard-game-dff83-default-rtdb.firebaseio.com/",projectId:"leopard-game-dff83",storageBucket:"leopard-game-dff83.firebasestorage.app",messagingSenderId:"200665155506",appId:"1:200665155506:web:8e60f63015e1d66b6906ab"};
+    const app=initializeApp(firebaseConfig),db=getDatabase(app);
+    const lobby=document.getElementById("lobby"),gameArea=document.getElementById("gameArea"),roomInput=document.getElementById("roomInput"),joinBtn=document.getElementById("joinBtn"),statusMsg=document.getElementById("statusMsg"),roomLabel=document.getElementById("roomLabel"),youLabel=document.getElementById("youLabel"),turnLabel=document.getElementById("turnLabel"),resultMsg=document.getElementById("resultMsg"),resetBtn=document.getElementById("resetBtn"),leaveBtn=document.getElementById("leaveBtn"),cells=document.querySelectorAll(".cell");
+    let roomId=null,mySymbol=null,gameRef=null,lastBoard=["","","","","","","","",""],lastWinner=null;
+    const WIN_PATTERNS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    
+    joinBtn.addEventListener("click",enterRoom);roomInput.addEventListener("keydown",e=>{if(e.key==="Enter")enterRoom()});
+    
+    async function enterRoom(){const room=roomInput.value.trim();if(!room){statusMsg.textContent="Введите название";return}roomId=room;mySymbol=null;statusMsg.textContent="Подключение...";gameRef=ref(db,`games/${roomId}`);if(gameRef)off(gameRef);onValue(gameRef,snapshot=>{const data=snapshot.val();if(!data){createNewGame();return}attachToGame(data)});lobby.classList.add("hidden");gameArea.classList.remove("hidden");roomLabel.textContent=`🏠 ${roomId}`}
+    async function createNewGame(){mySymbol="X";await set(gameRef,{board:Array(9).fill(""),turn:"X",winner:null,playerX:true,playerO:false,createdAt:serverTimestamp()})}
+    function attachToGame(data){if(!mySymbol){if(!data.playerO){mySymbol="O";update(gameRef,{playerO:true})}else{mySymbol="spectator"}youLabel.textContent=mySymbol==="X"?"Вы: ❌":mySymbol==="O"?"Вы: ⭕":"Вы: 👀"}render(data)}
+    
+    cells.forEach(cell=>{cell.addEventListener("click",()=>{if(!mySymbol||mySymbol==="spectator"||!gameRef)return;onValue(gameRef,snap=>{const data=snap.val();if(!data||data.winner||data.turn!==mySymbol)return;const i=Number(cell.dataset.index);if(data.board[i]!=="")return;const newBoard=[...data.board];newBoard[i]=mySymbol;const winInfo=checkWinner(newBoard);const isDraw=!winInfo&&newBoard.every(c=>c!=="");update(gameRef,{board:newBoard,turn:mySymbol==="X"?"O":"X",winner:winInfo?winInfo.winner:(isDraw?"draw":null)})},{onlyOnce:true})})});
+    
+    function checkWinner(board){for(const p of WIN_PATTERNS){const[a,b,c]=p;if(board[a]&&board[a]===board[b]&&board[a]===board[c])return{winner:board[a],line:p}}return null}
+    
+    function render(data){if(!data)return;cells.forEach((cell,i)=>{const val=data.board[i]||"";cell.textContent=val;cell.classList.toggle("taken",val!=="");cell.classList.remove("win")});lastBoard=[...data.board];if(!data.winner){turnLabel.textContent=(data.turn==="X"?"Ход: ❌":"Ход: ⭕")+(mySymbol===data.turn?" — ваш":"");resultMsg.textContent="";resetBtn.classList.add("hidden")}else if(data.winner==="draw"){turnLabel.textContent="Игра окончена";resultMsg.textContent="🤝 Ничья!";resultMsg.className="result draw-msg";resetBtn.classList.remove("hidden")}else{turnLabel.textContent="Игра окончена";resultMsg.textContent=`🏆 Победили ${data.winner==="X"?"❌":"⭕"}!`;resultMsg.className="result win-msg";resetBtn.classList.remove("hidden");const info=checkWinner(data.board);if(info)info.line.forEach(i=>cells[i].classList.add("win"))}lastWinner=data.winner}
+    
+    resetBtn.addEventListener("click",()=>{if(!gameRef)return;update(gameRef,{board:Array(9).fill(""),turn:"X",winner:null});lastWinner=null});
+    leaveBtn.addEventListener("click",()=>{if(gameRef)off(gameRef);roomId=null;mySymbol=null;gameRef=null;lastBoard=["","","","","","","","",""];lastWinner=null;cells.forEach(c=>{c.textContent="";c.className="cell"});resultMsg.textContent="";statusMsg.textContent="";roomInput.value="";gameArea.classList.add("hidden");lobby.classList.remove("hidden")});
   </script>
 </body>
 </html>
